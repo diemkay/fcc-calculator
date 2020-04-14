@@ -1,0 +1,21 @@
+:root {
+  --size1: 2px;
+  --size2: 4px;
+  --size3: 6px;
+  --size4: 8px;
+  --size5: 10px;
+  --size6: 14px;
+  --size7: 18px;
+  --size8: 20px;
+}
+
+body {
+  font-family: monospace;
+  padding: var(--size6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  box-sizing: border-box;
+}
