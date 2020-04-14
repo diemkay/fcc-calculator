@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@200;300;400&display=swap');
+
 :root {
   --size1: 2px;
   --size2: 4px;
@@ -7,10 +9,22 @@
   --size6: 14px;
   --size7: 18px;
   --size8: 20px;
+  --scheme1--1: #ff6138;
+  --scheme1--2: #eaede7;
+  --scheme1--3: #bab4a1;
+  --scheme1--4: #d8dbd4;
+
+  --scheme2--1: #e5e5e5;
+  --scheme2--2: #efcc32;
+  --scheme2--3: #725238;
+  --scheme2--4: #4c683e;
+  --scheme2--5: #c52624;
+  --scheme2--6: #bdbdbf;
+  --scheme2--7: #3f3f3f;
 }
 
 body {
-  font-family: monospace;
+  font-family: 'Oxanium', monospace;
   padding: var(--size6);
   display: flex;
   flex-direction: column;
@@ -18,4 +32,91 @@ body {
   align-items: center;
   height: 100vh;
   box-sizing: border-box;
+  width: 400px;
+  margin: 0 auto;
+}
+
+.button {
+  background-color: whitesmoke;
+  border-radius: 20px;
+  border: 1px solid lightgrey;
+  display: inline-block;
+  cursor: pointer;
+  color: var(--scheme2--7);
+  font-family: Arial;
+  font-size: 20px;
+  padding: 16px 31px;
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button:hover {
+  background-color: #5cbf2a;
+}
+.button:active {
+  position: relative;
+  top: 1px;
+}
+/*  BUTTON EXCEPTIONS  */
+
+#clear {
+  background-color: var(--scheme2--5);
+  color: whitesmoke;
+  border: 1px solid lightgrey;
+}
+
+#equals {
+  background-color: var(--scheme2--2);
+  color: var(--scheme2--7);
+  border: 1px solid lightgrey;
+}
+
+#calculator-frame {
+  height: 450px;
+  width: 350px;
+  border-radius: 5px;
+  background-color: var(--scheme2--1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+}
+
+#calculator-face {
+  height: 350px;
+  width: 90%;
+  display: grid;
+  grid-template-areas:
+    'display display display display'
+    'clear clear divide multiply'
+    'seven eight nine subtract'
+    'four five six add'
+    'one two three equals'
+    'zero zero decimal equals';
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  grid-gap: 5px;
+}
+
+/* SCREEN */
+
+#display {
+  grid-area: display;
+  text-transform: uppercase;
+  font-size: 25px;
+  font-weight: 200;
+  height: 50px;
+  background-color: #719f22;
+  color: whitesmoke;
+  border: 15px solid var(--scheme2--6);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 20px 0 5px 0;
+  padding-right: 10px;
 }
