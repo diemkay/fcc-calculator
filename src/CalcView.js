@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from './Button';
 
-export const CalcView = () => {
+export const CalcView = ({ handleClick, displayValue }) => {
   const buttons = {
     0: 'zero',
     1: 'one',
@@ -31,23 +31,20 @@ export const CalcView = () => {
         divId={buttons[button]}
         content={button}
         gridArea={buttons[button]}
+        onClick={handleClick}
       />
     );
   }
 
   return (
     <React.Fragment>
-      <h2>Hello Calculator</h2>
+      <h1>Hello Calculator</h1>
       <div id="calculator-frame">
         <div id="calculator-face">
-          <div id="display">1234567890</div>
+          <div id="display">{displayValue}</div>
           {allButtons}
         </div>
       </div>
     </React.Fragment>
   );
 };
-
-//    User Story #6: My calculator should contain an element to display values with a
-//     corresponding id="display".
-// id="zero", id="one", id="two", id="three", id="four", id="five", id="six", id="seven", id="eight", and id="nine".

@@ -1,8 +1,9 @@
 import React from 'react';
 
-export const Button = ({ content, divId, gridArea }) => {
+export const Button = ({ content, divId, gridArea, onClick }) => {
   return (
     <div
+      onClick={onClick}
       className="button"
       id={divId}
       style={{
