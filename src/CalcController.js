@@ -1,47 +1,26 @@
 import React from 'react';
 import { CalcView } from './CalcView';
-import { getButtonType } from './getButton';
-import { getButtonValue } from './getButton';
-import { getButtonName } from './getButton';
-
-const calculate = {
-  '/': (firstOperand, secondOperand) => firstOperand / secondOperand,
-
-  '*': (firstOperand, secondOperand) => firstOperand * secondOperand,
-
-  '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
-
-  '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
-
-  '=': (firstOperand, secondOperand) => secondOperand,
-};
+import { getButtonType, getButtonValue, getButtonName } from './getButton';
 
 export class CalcController extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: '0',
-      firstOperand: null,
-      waitingForSecondOperand: false,
-      operator: null,
+      input: null,
+      operation: '+',
+      equation: [],
+      isNegative: false,
     };
   }
 
   handleClick = (event) => {
     const { innerText } = event.target;
-    // const { input, operation, equation, displayValue } = this.state;
-
     const buttonType = getButtonType(innerText);
     const buttonValue = getButtonValue(innerText);
     const buttonName = getButtonName(innerText);
 
-    if (buttonType === 'operand') {
-      this.handleOperation(innerText);
-      return;
-    }
-
-    if (buttonType === 'decimal') {
-      this.addDecimal(buttonValue);
+    if (buttonType === 'number') {
+      this.appendDigit(buttonValue);
       return;
     }
 
@@ -50,81 +29,127 @@ export class CalcController extends React.Component {
       return;
     }
 
-    this.addDigit(buttonValue);
+    if (buttonType === 'operation') {
+      this.handleOperation(innerText);
+    }
+
+    if (buttonType === 'decimal') {
+      this.appendDecimal(innerText);
+    }
   };
 
-  addDigit = (number) => {
-    if (this.state.waitingForSecondOperand === true) {
-      this.setState({
-        displayValue: number,
-        waitingForSecondOperand: false,
-      });
-    } else
-      this.setState({
-        displayValue:
-          this.state.displayValue === '0'
-            ? number.toString()
-            : this.state.displayValue + number.toString(),
-      });
+  appendDigit = (number) => {
+    this.setState((prevState) => ({
+      ...prevState,
+      input: !prevState.input ? number : prevState.input + number.toString(),
+    }));
   };
 
-  addDecimal = (dot) => {
-    if (this.state.waitingForSecondOperand === true) return;
-
-    if (!this.state.displayValue.includes(dot)) {
+  appendDecimal = (dot) => {
+    if (!this.state.input.toString().includes(dot)) {
       this.setState({
-        displayValue: this.state.displayValue + dot,
+        input: this.state.input + dot,
       });
     }
   };
 
   handleOperation = (nextOperator) => {
-    const { firstOperand, displayValue, operator, waitingForSecondOperand } = this.state;
-    const inputValue = parseFloat(displayValue);
-
-    if (operator && waitingForSecondOperand) {
+    const { operation, input } = this.state;
+    // If input and operation are full, push their content to equation, which clears room for new input
+    if (input && operation) {
+      this.pushToEquation(input, operation);
+    }
+    if (!input && operation && nextOperator === '-') {
       this.setState({
-        operator: nextOperator,
+        isNegative: !this.state.isNegative,
       });
       return;
     }
 
-    if (firstOperand === null) {
-      this.setState({
-        firstOperand: inputValue,
-      });
-    } else if (operator) {
-      const currentValue = firstOperand || 0;
-      const result = calculate[operator](currentValue, inputValue);
-      this.setState({
-        displayValue: String(result),
-        firstOperand: result,
-      });
+    if (input && nextOperator === '=') {
+      this.calculateResult();
+      return;
     }
 
-    this.setState({
-      waitingForSecondOperand: true,
-      operator: nextOperator,
-    });
+    this.setState((prevState) => ({
+      ...prevState,
+      operation: nextOperator,
+      isNegative: false,
+    }));
   };
 
   handleReset = () => {
     this.setState({
-      displayValue: '0',
-      firstOperand: null,
-      waitingForSecondOperand: false,
-      operator: null,
+      input: null,
+      operation: '+',
+      equation: [],
+      isNegative: false,
     });
   };
 
+  calculateResult = () => {
+    this.setState((prevState) => {
+      const { equation } = prevState;
+
+      // 1. First pass: multiplication and division
+      const interimEq = equation.reduce((acc, eqPart) => {
+        // Copy add/subtract to new array
+        if (eqPart.operation === '+' || eqPart.operation === '-') {
+          return [...acc, eqPart];
+        }
+
+        const head = acc.slice(0, -1);
+        const last = acc.slice(-1)[0];
+
+        const result = {
+          operation: last.operation,
+          number:
+            eqPart.operation === '*'
+              ? eqPart.number * last.number
+              : last.number / eqPart.number,
+        };
+
+        return [...head, result];
+      }, []);
+
+      // 2. Finally, adding and subtracting
+      const finalResult = interimEq.reduce((acc, eqPart) => {
+        return eqPart.operation === '+' ? acc + eqPart.number : acc - eqPart.number;
+      }, 0);
+
+      // fCC requires 4 decimal places of precision when rounding
+      return {
+        input: finalResult % 1 > 0 ? Number(finalResult.toFixed(4)) : finalResult,
+        equation: [],
+        operation: '+',
+      };
+    });
+  };
+
+  pushToEquation = (equationInput, equationOperation) => {
+    this.setState((prevState) => ({
+      equation: [
+        ...prevState.equation,
+        {
+          operation: equationOperation,
+          number: (prevState.isNegative ? -1 : 1) * Number(equationInput),
+        },
+      ],
+      input: null,
+      operation: null,
+      isNegative: false,
+    }));
+  };
+
   render() {
-    const { displayValue } = this.state;
+    const { input } = this.state;
+    console.log(this.state);
 
     return (
       <CalcView
         handleClick={this.handleClick}
         handleReset={this.handleReset}
-        displayValue={displayValue}
+        displayValue={input}
       />
     );
   }

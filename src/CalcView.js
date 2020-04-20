@@ -41,7 +41,7 @@ export const CalcView = ({ handleClick, displayValue }) => {
       <h1>Hello Calculator</h1>
       <div id="calculator-frame">
         <div id="calculator-face">
-          <div id="display">{displayValue}</div>
+          <div id="display">{displayValue ? displayValue : '0'}</div>
           {allButtons}
         </div>
       </div>

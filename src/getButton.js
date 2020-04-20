@@ -56,27 +56,30 @@ const buttons = {
   },
   '*': {
     name: 'multiply',
-    type: 'operand',
+    type: 'operation',
   },
   '/': {
     name: 'divide',
-    type: 'operand',
-    // operation: (firstOperand, secondOperand) => firstOperand / secondOperand,
+    type: 'operation',
   },
   '+': {
     name: 'add',
-    type: 'operand',
+    type: 'operation',
+    value: '+',
   },
   '-': {
     name: 'subtract',
-    type: 'operand',
+    type: 'operation',
+    value: '-',
   },
   '=': {
     name: 'equals',
-    type: 'operand',
+    type: 'operation',
+    value: '=',
   },
   AC: {
     name: 'clear',
+    type: 'operation',
   },
 };
 
